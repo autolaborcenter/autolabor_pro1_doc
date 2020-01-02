@@ -1,0 +1,112 @@
+# ROS驱动包(ROS Driver Package)使用
+ROS驱动包(ROS Driver Package)是为使用ROS开发的用户，提供上位机与下位机通讯的驱动包，[此处](download.md)下载。
+
+## 速度控制方法
+
+向 /cmd\_vel 话题上发送速度指令
+
+## 订阅的话题  
+/cmd\_vel ([geometry_msgs/Twist](http://docs.ros.org/api/geometry_msgs/html/msg/Twist.html))
+	
+## 发布的话题
+/wheel\_odom ([nav_msgs/Odometry](http://docs.ros.org/api/nav_msgs/html/msg/Odometry.html))  
+/remaining\_battery ([std_msgs::Int32](http://docs.ros.org/hydro/api/std_msgs/html/msg/Int32.html))  
+剩余电池电量
+
+## 参数
+~port_name (str, default: /dev/ttyUSB0)  
+串口名称  
+~odom_frame (str, default: odom)  
+odom  
+~base_frame (str, default: base_link)  
+base_link  
+~baud_rate (int, default: 115200)  
+波特率  
+~control_rate (int, default: 10)  
+控制频率  
+~sensor_rate (int, default: 5)  
+请求电池电量频率  
+~reduction_ratio (double, default: 2.5)  
+减速比  
+~encoder_resolution (double, default: 1600)  
+编码器的编码数  
+~wheel_diameter (double, default: 0.25)  
+车轮直径  
+~model_param (double, default:0.83)  
+车辆运动模型参数  
+~pid_rate (double, default:50.0)  
+PID控制周期 
+
+## TF转换
+
+odom → base_link
+
+## 使用示例
+	
+	
+	<lanuch>
+		<node name="autolabor_driver" pkg="autolabor_driver" type="autolabor_driver" output="screen">
+			<param name="port_name" value="/dev/ttyUSB0" />
+			<param name="odom_frame" value="odom" />
+			<param name="base_frame" value="base_link" />
+		
+			<param name="baud_rate" value="115200" />
+			<param name="control_rate" value="10" />
+			<param name="sensor_rate" value="5" />
+		
+			<param name="reduction_ratio" value="2.5" />
+			<param name="encoder_resolution" value="1600.0" />
+		
+			<param name="wheel_diameter" value="0.25" />
+			<param name="model_param" value="0.83" />
+			<param name="pid_rate" value="50.0" />
+	    </node>
+	</lanuch>    
+	
+## 常见问题
+* 如果启动的时无法找到端口，请使用以下命令，查看是否存在该目录 /dev/ttyUSB0
+		
+		ll /dev/ttyUSB0
+		
+		
+	* 若不存在，请检查：  
+		1. 串口线是否插好
+		2. 小车电源是否打开
+		3. 如果上述都没有问题，请查询是否是其他的USB端口，如/dev/ttyUSB1或/dev/ttyUSB2
+	* 如果存在目录，但启动显示权限不足，请使用以下命令进行赋权
+	
+			sudo chmod 666 /dev/ttyUSB0 	
+
+		
+		
+# ROS驱动调试助手
+
+该驱动还为用户提供了一个调试的节点，可以使用该节点直接向驱动板发送串口指令，进行指令速度与实际运行速度的校准或调整模型等工作。
+
+
+## 使用步骤
+1. 创建并启动launch文件，示例如下  
+
+
+		<launch>
+		    <node name="driver" pkg="autolabor_driver" type="sim_autolabor_driver" output="screen">
+				<param name="port_name" value="/dev/ttyUSB0" />
+				<param name="baud_rate" value="115200" />
+				<param name="control_rate" value="10" />
+				<param name="pid_rate" value="50" />
+		    </node>
+		</launch>
+	
+2. 打开新终端，输入以下命令，打开操作界面（如下图）
+
+		rosrun rqt_reconfigure rqt_reconfigure
+		
+	![](imgs/autolaborPro1-rqt.png)  
+	
+3. 调整 left\_wheel 与 right\_wheel的数值，可独立控制左/右轮转速，勾选 run\_flag，即可向小车发送速度指令
+
+注：调整的数值为一个PID控制周期下，预期编码器的变化数，详细的计算方法可参见控制车轮速度指令中的**[编码器计数计算方法](controlRule.md#caculate-method)**
+
+
+
+

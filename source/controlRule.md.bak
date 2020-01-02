@@ -1,0 +1,206 @@
+下面列出几个常用的控制指令示例：
+# 控制车轮速度指令
+假设请求左车轮速度为0.1m/s，传输数据帧内容为：
+
+	0x 55 AA 09 00 01 00 13 00 00 00 00 00 00 E4
+<table>
+	<tbody>
+		<tr align="center">
+			<td rowspan="2">Header</td>
+			<td rowspan="2">Length</td>
+			<td rowspan="2">Sequence</td>
+			<td colspan="5">Payload</td>
+			<td rowspan="2">Checksum </td>
+		</tr>
+		<tr align="center">
+			<td width="10%">MsgID</td>
+			<td colspan="4">PARAM</td>
+		</tr>
+		<tr align="center">
+			<td>55 AA</td>
+			<td>09</td>
+			<td>00</td>
+			<td>01</td>
+			<td>00 13</td>
+			<td>00 00</td>
+			<td>00 00</td>
+			<td>00 00</td>
+			<td>E4</td>
+		</tr>
+		<tr align="center">
+			<td>起始标志位</td>
+			<td>有效数据的长度为9个字节</td>
+			<td>第一个指令</td>
+			<td>控制车轮速度指令</td>
+			<td>左车轮</td>
+			<td>右车轮</td>
+			<td colspan="2">固定不变为0</td>
+			<td>异或校验码</td>
+		</tr>
+	</tbody>
+</table>
+
+如上文所说，通常我们所说的速度是以m/s为单位的速度，而指令中车轮速度的参数实际上是单位时间内期望编码器的计数，在此需要将指令的速度V（m/s）结合AP1下位机的物理参数进行计算，下面是车轮速度换算方法。
+
+AP1下位机物理参数如下表：
+
+名称  | 参数 | 说明
+:-------------: | :-------------: | :-------------
+wheel_diameter |  0.25 | 车轮直径，单位：米
+encoder_resolution | 1600 | 编码器转一圈产生的脉冲数
+PID_RATE  |  50 | PID调节PWM值的频率
+encoder_gear  |  10 | 编码器的齿数
+wheel_gear | 25 | 车轮的齿数
+motor_gear  |  20 | 电机的齿数
+motor_rpm | 75 | 电机的最大转速，每分钟75转
+
+假设我们给AP1左轮V=0.1m/s的速度（右轮速度的计算指令与此相同），<a name="caculate-method">计算方法</a>如下：  
+
+车轮转动一圈，移动的距离为轮子的周长：  
+	
+	distance_one_round
+	=wheel_diameter*π
+	=wheel_diameter*3.1415926
+	=0.25*3.1415926
+	
+车轮转动一圈，编码器产生的脉冲数为：
+	
+	wheel_encoder_resolution
+	=(wheel_gear/encoder_gear)*encoder_resolution
+	=(25/10)*1600
+	=4000
+	
+注：车轮的齿数是25，编码器的齿数是10，车轮与编码器通过履带连接，车轮转1圈，编码器转2.5圈；编码器的脉冲数可以理解为编码器计数，编码器自转一圈计数1600，则车轮转一圈编码器计数为1600*2.5。
+	
+所以AP1每移动1米产生脉冲数（编码器的计数）为:	
+	
+	ticks_per_meter
+	=(1/distance_one_round)*wheel_encoder_resolution
+	=1/(0.15*3.1415926)*4000
+	=8488.26
+	
+又因为PID的频率是1秒钟50次，所以指令的参数计算方法为:
+	
+	int(V*ticks_per_meter/PID_RATE)
+	=int(0.1*8848.26/50)
+	=18
+	
+	
+用户可直接使用0.1m/s速度的计算结果来对应自己期望的速度换算成相应的数值，如0.2m/s为36，1m/s为180等。
+	
+接着将计算出来的18换算为16进制为：
+	
+	00 13
+
+则速度指令的PARAM为 
+
+	00 13 00 00 00 00 00 00 
+	
+
+注：如果用户发送的速度超过了最大速度，则会按最大速度行进。
+
+# 获取电池电量指令	
+	0x 55 AA 02 01 02 00 FF
+<table>
+	<tbody>
+		<tr align="center">
+			<td rowspan="2">Header</td>
+			<td rowspan="2">Length</td>
+			<td rowspan="2">Sequence</td>
+			<td colspan="2">Payload</td>
+			<td rowspan="2">Checksum </td>
+		</tr>
+		<tr align="center">
+			<td>MsgID</td>
+			<td>PARAM</td>
+		</tr>
+		<tr align="center">
+			<td>55 AA</td>
+			<td>02</td>
+			<td>01</td>
+			<td>02</td>
+			<td>00</td>
+			<td>FE</td>
+		</tr>
+		<tr align="center">
+			<td>起始标志位</td>
+			<td>有效数据的长度为2个字节</td>
+			<td>第二个指令</td>
+			<td>小车的电量请求</td>
+			<td>参数为00</td>
+			<td>异或校验码</td>
+		</tr>
+	</tbody>
+</table>
+
+# 重置状态指令	
+当接收到下位机发送的错误状态码FF时，需要将AP1状态重置（Reset)，才能重新恢复控制，指令如下：  
+	
+	0x 55 AA 02 02 05 00 FA
+<table>
+	<tbody>
+		<tr align="center">
+			<td rowspan="2">Header</td>
+			<td rowspan="2">Length</td>
+			<td rowspan="2">Sequence</td>
+			<td colspan="2">Payload</td>
+			<td rowspan="2">Checksum </td>
+		</tr>
+		<tr align="center">
+			<td>MsgID</td>
+			<td>PARAM</td>
+		</tr>
+		<tr align="center">
+			<td>55 AA</td>
+			<td>02</td>
+			<td>02</td>
+			<td>05</td>
+			<td>00</td>
+			<td>FA</td>
+		</tr>
+		<tr align="center">
+			<td>起始标志位</td>
+			<td>有效数据的长度为2个字节</td>
+			<td>第三个指令</td>
+			<td>重置状态指令</td>
+			<td>参数为00</td>
+			<td>异或校验码</td>
+		</tr>
+	</tbody>
+</table>	
+
+# 清除编码器计数指令	
+ 
+	
+	0x 55 AA 02 03 06 00 F8
+<table>
+	<tbody>
+		<tr align="center">
+			<td rowspan="2">Header</td>
+			<td rowspan="2">Length</td>
+			<td rowspan="2">Sequence</td>
+			<td colspan="2">Payload</td>
+			<td rowspan="2">Checksum </td>
+		</tr>
+		<tr align="center">
+			<td>MsgID</td>
+			<td>PARAM</td>
+		</tr>
+		<tr align="center">
+			<td>55 AA</td>
+			<td>02</td>
+			<td>03</td>
+			<td>06</td>
+			<td>00</td>
+			<td>F8</td>
+		</tr>
+		<tr align="center">
+			<td>起始标志位</td>
+			<td>有效数据的长度为2个字节</td>
+			<td>第四个指令</td>
+			<td>请求清除编码器计数</td>
+			<td>参数为00</td>
+			<td>异或校验码</td>
+		</tr>
+	</tbody>
+</table>

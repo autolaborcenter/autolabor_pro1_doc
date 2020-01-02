@@ -1,0 +1,90 @@
+{
+	"_readme": [
+		"注：uri 必须保障唯一性，若有重复引用，请使用 rewrite 注册新的 uri",
+		"由于设计缺陷，rewrite 时只能自定义最后一级路径",
+		"uri 格式 1 - 相对文档：a/b/c",
+		"uri 格式 2 - 相对站内：/usedoc/ap1/a/b/c",
+		"uri 格式 3 - 绝对地址：http://www.baidu.com",
+		"_readme 本身并没有什么软用"
+	],
+	"index": "receipt",
+	"rewrite": {
+		
+	},
+	"plugin": {
+		"emoji": false,
+		"taskList": true,
+		"tex": true,
+		"flowChart": true,
+		"sequenceDiagram": true
+	},
+	"menu": {
+		"toc": {
+			"startLevel": "1",
+			"overLevel": "1"
+		},
+		"items": [
+			{
+				"name": "Autolabor Pro1",
+				"isOpen": true,
+				"items": [
+					{
+						"name": "收货指南",
+						"uri": "receipt"
+					},
+					{
+						"name": "快速上手",
+						"uri": "getStart"
+					},
+					{
+						"name": "产品手册",
+						"isOpen": false,
+						"items": [
+							{
+								"name": "产品介绍",
+								"uri": "overview"
+							},
+							{
+								"name": "产品参数",
+								"uri": "intro"
+							},
+							{
+								"name": "产品使用",
+								"uri": "use"
+							},
+							{
+								"name": "协议规则",
+								"uri": "protocolRule"
+							},
+							{
+								"name": "指令说明",
+								"uri": "controlRule"
+							},
+							{
+								"name": "指令发送",
+								"uri": "sendCommand"
+							}
+						]
+					},
+					{
+						"name": "补充知识",
+						"items": [
+							{
+								"name": "TF坐标变换",
+								"uri": "tfTransform"
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "导航套件二代(双雷达)",
+				"uri": "/usedoc/navigationKit2"
+			},
+			{
+				"name": "导航套件一代(单雷达)",
+				"uri": "/usedoc/navigationKit1"
+			}
+		]
+	}
+}
