@@ -13,7 +13,7 @@ ROS驱动包(ROS Driver Package)是为使用ROS开发的用户，提供上位机
 剩余电池电量  
 
 /current([std_msgs::Float32](http://docs.ros.org/hydro/api/std_msgs/html/msg/Float32.html))  
-电压信息  
+电流信息  
 
 /voltage([std_msgs::Float32](http://docs.ros.org/hydro/api/std_msgs/html/msg/Float32.html))  
 电压信息
