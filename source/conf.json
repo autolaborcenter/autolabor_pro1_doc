@@ -80,6 +80,10 @@
 							{
 								"name": "TF坐标变换",
 								"uri": "tfTransform"
+							},
+							{
+								"name": "里程计标定",
+								"uri": "odomCalibration"
 							}
 						]
 					}
