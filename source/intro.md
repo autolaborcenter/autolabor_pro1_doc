@@ -91,7 +91,7 @@
 # 控制面板使用  
 <div style="width:90%;">
  
-![ControlPanel](imgs/autolaborPro1-controlPanel.JPG)
+![ControlPanel](imgs/autolaborPro1-controlPanel.jpg)
 
 </div>
 
