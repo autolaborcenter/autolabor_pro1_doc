@@ -110,6 +110,19 @@ RS232串口 | 1 | 使用串口数据线连接下位机与上位机，进行通�
 
 * * *
 
+# 熔断式保险或空气开关
+
+   当AP1意外出现短路、过载的情况时，熔断式保险或空气开关会主动切断电池的回路。
+   
+   空气开关：
+   
+  ![circuit_braker.png](imgs/circuit_breaker.png)
+  
+  旧型号的AP1内部为熔断式保险，规格：中号40A。
+  
+  ![fuse.png](imgs/fuse.png)
+
+
 # 硬件结构
 ![HardwareStructure.jpg](imgs/autolaborPro1-hardwareStructure.jpg)
 
@@ -119,5 +132,5 @@ RS232串口 | 1 | 使用串口数据线连接下位机与上位机，进行通�
 
 # 电路原理图
 [下载](http://www.autolabor.com.cn/download)
-![](imgs/autolaborPro1-moto_driver.png)
+![imgs/autolaborPro1-moto_driver](imgs/autolaborPro1-moto_driver.png)
 
