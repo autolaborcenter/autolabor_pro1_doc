@@ -5,19 +5,19 @@
 		<td width="20%">尺寸</td>
 		<td>726*617*273mm</td>
 		<td>净重</td>
-		<td>35kg</td>
+		<td>40kg</td>
 	</tr>
 	<tr>
 		<td>负载</td>
-		<td>直线50kg/原地转弯30KG</td>
+		<td>50kg</td>
 		<td>电池</td>
-		<td>24V DC锂聚合物电池</td>
+		<td>24v 磷酸铁锂电池</td>
 	</tr>
 	<tr>	
 		<td>电池容量</td>
-		<td>10Ah/18Ah（选配）</td>
+		<td>20AH</td>
 		<td>续航时间</td>
-		<td>2.5h/4h</td>
+		<td>4h</td>
 	</tr>
 	<tr>
 		<td>辅助电源</td>
